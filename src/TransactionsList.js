@@ -31,17 +31,12 @@ class TransactionsList extends Component {
     
     openModal(index) {
         this.setState({ isOpen: true, itemNum : JSON.stringify(index) })
-        console.log(this.state.items);
-        console.log(JSON.stringify(index));
-        console.log(this.state.itemNum);
-        console.log(this.state.items[this.state.itemNum]);
     };
     closeModal = () => this.setState({ isOpen: false, itemNum : "" });
 
 
     LoadingButton = () => () => {
         const [isLoading, setLoading] = useState(false);
-        console.log(this.showForm);
         useEffect(() => {
             var targetUrl;
             let isMounted = true; // note this flag denote mount status
@@ -68,11 +63,9 @@ class TransactionsList extends Component {
             fetch( targetUrl)
                 .then(blob => blob.json())
                 .then(data => {
-                    console.table(data);
                     if (isMounted) {
                         this.setState({items: data})
                     }
-                    console.log(this.state.items)
                     setLoading(false);
                     if(data === 0){
                         alert("Aucune donnée trouvée.");
@@ -81,7 +74,6 @@ class TransactionsList extends Component {
                     return data;
                 })
                 .catch(e => {
-                    console.log(e);
                     return e;
                 });
             }
@@ -105,7 +97,6 @@ class TransactionsList extends Component {
       ThToRender = () => () => {
         switch (this.state.form) {
             case "1":
-                console.log('1');
                 return (<thead>
                     <tr>
                         <th scope="col">PAN</th>
@@ -118,7 +109,6 @@ class TransactionsList extends Component {
                 </thead>)
                 
             case "2":
-                console.log('2')
                 return (<thead>
                     <tr>
                         <th scope="col">PAN</th>
@@ -131,7 +121,6 @@ class TransactionsList extends Component {
                 </thead>)
 
             case "3":
-                console.log('3');
                 return (<thead>
                     <tr>
                         <th scope="col">PAN</th>
@@ -144,7 +133,6 @@ class TransactionsList extends Component {
                 </thead>)
 
             case "4":
-                console.log('4');
                 return ( <thead>
                     <tr>
                         <th scope="col">PAN</th>
@@ -171,11 +159,9 @@ class TransactionsList extends Component {
       FormToRender = () => () => {
         const ButtonLoad = this.LoadingButton();
         this.showForm = true;
-        console.log(this.showForm);
 
         switch (this.state.form) {
             case "1":
-                console.log('1');
                 return (
                     <div style={{paddingTop: "1em"}}>
                         <Form.Row>
@@ -197,7 +183,6 @@ class TransactionsList extends Component {
                 )
                 
             case "2":
-                console.log('2')
                 return (<div style={{paddingTop: "1em"}}>
                     <Form.Row>
                     <Form.Group as={Col}>
@@ -220,7 +205,6 @@ class TransactionsList extends Component {
                 </div>)
 
             case "3":
-                console.log('3');
                 return (<div style={{paddingTop: "1em"}}><Form.Row>
                     <Form.Group as={Col} controlId="formGridCity">
                     <Form.Label style={{ color: "white", fontWeight: "bold"}}>ID opération</Form.Label>
@@ -239,7 +223,6 @@ class TransactionsList extends Component {
                 </div>)
 
             case "4":
-                console.log('4');
                 return (<div style={{paddingTop: "1em"}}><Form.Row>
                     <Form.Group as={Col} controlId="formGridCity">
                     <Form.Label style={{ color: "white", fontWeight: "bold"}}>Card ID</Form.Label>
@@ -265,7 +248,6 @@ class TransactionsList extends Component {
     setForm(i){
         this.setState({ form: i,
         items: [] })    
-        console.log(i);
     }
 
     render() {
@@ -309,7 +291,6 @@ class TransactionsList extends Component {
         let tableToRender;
         if (this.state.items) {
             tableToRender = this.state.items.map((item, index) => {
-                console.log("INDEX "+index)
                 if(this.state.form <4){
                   return <tbody key={index}>
                     <tr>
@@ -409,7 +390,6 @@ class TransactionsList extends Component {
         let itemsToRender;
         if (this.state.items) {
           itemsToRender = this.state.items.map((item, index) => {
-              console.log(item.distributorRef);
               if(this.state.form <4){
                 return <Col key={index} style={{paddingTop: "1em"}}><Card border="warning" className="text-center" >
                 <Card.Header >{item.distributorRef}</Card.Header>
