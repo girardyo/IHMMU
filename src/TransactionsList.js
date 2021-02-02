@@ -5,7 +5,7 @@ import Col from 'react-bootstrap/Col';
 import ReactDOM from 'react-dom'
 import Card from 'react-bootstrap/Card';
 import Row from 'react-bootstrap/Row';
-
+import Modal from 'react-bootstrap/Modal';
 
 
 class TransactionsList extends Component {
@@ -18,14 +18,26 @@ class TransactionsList extends Component {
 
         dateTransaction: "",
         items: [],
-        form: ""
-
+        form: "",
+        isOpen: false,
+        itemNum: ""
       };
       
 
     componentDidMount(){
 
     }
+
+    
+    openModal(index) {
+        this.setState({ isOpen: true, itemNum : JSON.stringify(index) })
+        console.log(this.state.items);
+        console.log(JSON.stringify(index));
+        console.log(this.state.itemNum);
+        console.log(this.state.items[this.state.itemNum]);
+    };
+    closeModal = () => this.setState({ isOpen: false, itemNum : "" });
+
 
     LoadingButton = () => () => {
         const [isLoading, setLoading] = useState(false);
@@ -62,8 +74,10 @@ class TransactionsList extends Component {
                     }
                     console.log(this.state.items)
                     setLoading(false);
+                    if(data === 0){
+                        alert("Aucune donnée trouvée.");
+                    }
 
-    
                     return data;
                 })
                 .catch(e => {
@@ -86,6 +100,73 @@ class TransactionsList extends Component {
           </Button>
         );
       }
+
+
+      ThToRender = () => () => {
+        switch (this.state.form) {
+            case "1":
+                console.log('1');
+                return (<thead>
+                    <tr>
+                        <th scope="col">PAN</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">Montant</th>
+                        <th scope="col">CodeMCC</th>
+                        <th scope="col">Carte ID</th>
+                        <th scope="col">Détails</th>
+                    </tr>
+                </thead>)
+                
+            case "2":
+                console.log('2')
+                return (<thead>
+                    <tr>
+                        <th scope="col">PAN</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">Montant</th>
+                        <th scope="col">CodeMCC</th>
+                        <th scope="col">Carte ID</th>
+                        <th scope="col">Détails</th>
+                    </tr>
+                </thead>)
+
+            case "3":
+                console.log('3');
+                return (<thead>
+                    <tr>
+                        <th scope="col">PAN</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">Montant</th>
+                        <th scope="col">CodeMCC</th>
+                        <th scope="col">Carte ID</th>
+                        <th scope="col">Détails</th>
+                    </tr>
+                </thead>)
+
+            case "4":
+                console.log('4');
+                return ( <thead>
+                    <tr>
+                        <th scope="col">PAN</th>
+                        <th scope="col">date</th>
+                        <th scope="col">Heure</th>
+                        <th scope="col">Montant</th>
+                        <th scope="col">Carte ID</th>
+                        <th scope="col">Marchand</th>
+                        <th scope="col">Numéro autorisation</th>
+                        <th scope="col">BeneficiaryServiceRef</th>
+        
+                    </tr>
+                </thead>)
+            default:
+                return (<thead>
+                <tr>
+                    
+                </tr>
+            </thead>)
+        }
+      }
+
 
       FormToRender = () => () => {
         const ButtonLoad = this.LoadingButton();
@@ -182,13 +263,150 @@ class TransactionsList extends Component {
       
       
     setForm(i){
-        this.setState({ form: i })    
+        this.setState({ form: i,
+        items: [] })    
         console.log(i);
     }
 
     render() {
-        let itemsToRender;
         const FormRender = this.FormToRender();
+        const ThRender = this.ThToRender(); 
+        //Table item creation
+        let thToRender;
+        if(this.state.from <4){
+            thToRender = <thead>
+                <tr>
+                    <th scope="col">PAN</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Montant</th>
+                    <th scope="col">CodeMCC</th>
+                    <th scope="col">Carte ID</th>
+                    <th scope="col">Détails</th>
+                </tr>
+            </thead>
+        }
+        else if(this.state.form === ""){
+            thToRender = <thead>
+ 
+            </thead>
+        }
+        else{
+            thToRender = <thead>
+            <tr>
+                <th scope="col">PAN</th>
+                <th scope="col">date</th>
+                <th scope="col">Heure</th>
+                <th scope="col">Montant</th>
+                <th scope="col">Carte ID</th>
+                <th scope="col">Marchand</th>
+                <th scope="col">Numéro autorisation</th>
+                <th scope="col">BeneficiaryServiceRef</th>
+
+            </tr>
+        </thead>
+        }
+
+        let tableToRender;
+        if (this.state.items) {
+            tableToRender = this.state.items.map((item, index) => {
+                console.log("INDEX "+index)
+                if(this.state.form <4){
+                  return <tbody key={index}>
+                    <tr>
+                        <td>{item.pan}</td>
+                        <td>{item.dateTransaction}</td>
+                        <td>{item.transactionAmount}</td>
+                        <td>{item.codeMCC}</td>
+                        <td>{item.cardId}</td>
+                        <td>
+                        <Button  variant="outline-warning" onClick={() => this.openModal(index)}>
+                            Détails
+                        </Button>                        
+                        </td>
+                    </tr>
+                  </tbody>
+
+                }
+                else{
+                  return <tbody key={index}>
+                        <tr>
+                            <td>{item.pan}</td>
+                            <td>{item.dateTransaction}</td>
+                            <td>{item.heureTransaction}</td>
+                            <td>{item.transactionAmount}</td>
+                            <td>{item.cardId}</td>
+                            <td>{item.nomMarchand}</td>
+                            <td>{item.numAut}</td>
+                            <td>{item.beneficiaryServiceRef}</td>
+                        </tr>
+                    </tbody>
+                }
+            });
+          }
+
+
+        //Modal to render
+        let modalToRender;
+        if(this.state.itemNum != ""){
+            return <Modal
+            show={this.state.isOpen} onHide={this.closeModal}
+            size="lg"
+            aria-labelledby="contained-modal-title-vcenter"
+            centered
+          >
+            <Modal.Header closeButton>
+              <Modal.Title id="contained-modal-title-vcenter">
+                
+              </Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+            <Card border="warning" className="text-center" >
+                <Card.Header >{this.state.items[this.state.itemNum].distributorRef}</Card.Header>
+                    <Card.Body> 
+                            <Card.Title>CardId : {this.state.items[this.state.itemNum].cardId}</Card.Title>
+                            <Card.Text >Pan : {this.state.items[this.state.itemNum].pan}</Card.Text>
+                            <Card.Text >BeneficiaryServiceRef : {this.state.items[this.state.itemNum].beneficiaryServiceRef}</Card.Text>
+            
+                            <Card.Text >FunderContractRef : {this.state.items[this.state.itemNum].funderContractRef}</Card.Text>
+                            <Card.Text >IdOperation : {this.state.items[this.state.itemNum].idOperation}</Card.Text>
+                            <Card.Text >TransactionType : {this.state.items[this.state.itemNum].transactionType}</Card.Text>
+                            <Card.Text >TechnicalStatus : {this.state.items[this.state.itemNum].technicalStatus}</Card.Text>
+                            <Card.Text >ReversalFlag : {this.state.items[this.state.itemNum].reversalFlag}</Card.Text>
+                            <Card.Text >CanalAcceptationValue : {this.state.items[this.state.itemNum].canalAcceptationValue}</Card.Text>
+                            <Card.Text >PosEntryMode : {this.state.items[this.state.itemNum].posEntryMode}</Card.Text>
+                            <Card.Text >CardStatus : {this.state.items[this.state.itemNum].cardStatus}</Card.Text>
+            
+                            <Card.Text >TransactionAmount : {this.state.items[this.state.itemNum].transactionAmount}</Card.Text>
+            
+                            <Card.Text >Exponent : {this.state.items[this.state.itemNum].exponent}</Card.Text>
+                            
+                            <Card.Text >NumAut : {this.state.items[this.state.itemNum].numAut}</Card.Text>
+                            
+                            <Card.Text >ClearingStatus : {this.state.items[this.state.itemNum].clearingStatus}</Card.Text>
+                            <Card.Text >UnknowPAN : {this.state.items[this.state.itemNum].unknowPAN}</Card.Text>
+                            <Card.Text >AcquirerReferenceNumber : {this.state.items[this.state.itemNum].acquirerReferenceNumber}</Card.Text>
+                            <Card.Text >IdMarchand :{this.state.items[this.state.itemNum].idMarchand}</Card.Text>
+                        
+                            <Card.Text >NomMarchand : {this.state.items[this.state.itemNum].nomMarchand}</Card.Text>
+                            
+                            <Card.Text >CountryCode : {this.state.items[this.state.itemNum].countryCode}</Card.Text>
+                            <Card.Text >IdTerminal : {this.state.items[this.state.itemNum].idTerminal}</Card.Text>
+                            <Card.Text >IdAcceptation : {this.state.items[this.state.itemNum].idAcceptation}</Card.Text>
+                            <Card.Text >CodeMCC : {this.state.items[this.state.itemNum].codeMCC}</Card.Text>
+                        </Card.Body>
+                        <Card.Footer  className="text-muted">{this.state.items[this.state.itemNum].dateTransaction}</Card.Footer>
+                </Card>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button  variant="warning"  onClick={this.closeModal}>Close</Button>
+            </Modal.Footer>
+          </Modal>
+        }
+
+
+
+        //Card item creation
+        let itemsToRender;
         if (this.state.items) {
           itemsToRender = this.state.items.map((item, index) => {
               console.log(item.distributorRef);
@@ -247,7 +465,7 @@ class TransactionsList extends Component {
             </Card></Col>;
               }
           });
-        }
+        }     
 
         return (
             <div>
@@ -272,12 +490,19 @@ class TransactionsList extends Component {
                     <FormRender></FormRender>
 
                     <pre  style={{paddingTop: "3em"}}>
+                        
+                    <table className="table table-sm table-dark table-striped">
+                        <ThRender></ThRender>
+                        {tableToRender}
+                    </table>
+
+                {/* 
                         <Row>
                         {
                         itemsToRender
                         } 
                         </Row>
-        
+        */}
                     </pre>
 
                 </div>
